@@ -16,7 +16,7 @@ node[:deploy].each do |app_name, app_config|
 
       case config_object[:type]
       when 'yaml'
-        content config_object[:data].to_yaml
+        content config_object[:data].to_h.to_yaml
       when 'json'
         content config_object[:data].to_json
       else
