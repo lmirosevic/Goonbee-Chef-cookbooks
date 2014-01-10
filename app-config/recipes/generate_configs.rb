@@ -25,3 +25,34 @@ node[:deploy].each do |app_name, app_config|
     end
   end
 end
+
+# Sample Chef JSON
+#
+# {
+#   "deploy": {
+#     "app_name": {
+#       "configs": {
+#         "settings": {                                 # config name
+#           "type": "yaml",                               # type of config can be: yaml, json
+#           "path": "/config/settings.yml",               # path where to write config to, relative to app root
+#           "data": {                                     # data to write to config file
+#             "app": {
+#               "concurrency": 8,
+#               "name": "...",
+#             },
+#             "new_relic": {
+#               "app_name": "...",
+#               "license_key": "...",
+#               "log": "stdout"
+#             },
+#             "aws": {
+#               "access_key_id": "...",
+#               "secret_access_key": "..."
+#             },
+#             # ...
+#           }
+#         }
+#       } 
+#     }
+#   }
+# }
