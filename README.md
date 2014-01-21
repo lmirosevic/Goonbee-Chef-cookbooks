@@ -1,4 +1,4 @@
-goonbee-cookbooks
+Goonbee-Chef-cookbooks
 ============
 
 Goonbee's Chef cookbooks
