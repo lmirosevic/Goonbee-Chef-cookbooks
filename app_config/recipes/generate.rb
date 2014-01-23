@@ -5,7 +5,7 @@ node[:deploy].each do |app_name, app_config|
   if app_config && app_config[:configs]
     app_config[:configs].each do |config_name, config_object|
       # determine path for settings file
-      app_root = "#{app_config[:deploy_to]}/current"
+      app_root = "#{app_config[:deploy_to]}/shared"
       filename = File.join(app_root, config_object[:path])
       
       #write config to file
@@ -22,6 +22,12 @@ node[:deploy].each do |app_name, app_config|
           content config_object[:data].to_json
         else
           raise 'Invalid config type used, currently supports "yaml" and "json"'
+        end
+
+        notifies :run, "execute[restart Rails app #{application}]"
+
+        only_if do
+          File.exists?("#{deploy[:deploy_to]}") && File.exists?("#{deploy[:deploy_to]}/shared/config/")
         end
       end
     end
