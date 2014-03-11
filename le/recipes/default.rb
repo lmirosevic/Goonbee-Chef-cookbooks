@@ -23,9 +23,9 @@ template "/etc/yum.repos.d/logentries.repo" do
   group 'root'
 end
 
-execute "yum update"
+execute "yum update -y"
 execute "yum install -y logentries"
-execute "le register --user-key #{node[:le][:userkey]} --name='#{node[:le][:hostname]}'"
+execute "le register --user-key #{node[:le][:userkey]} --name='#{node[:le][:hostname]}' --force"
 execute "yum install -y logentries-daemon"
 
 class Chef::Recipe
