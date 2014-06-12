@@ -25,7 +25,7 @@ node[:deploy].each do |app_name, app_config|
         end
 
         #restart rails app
-        notifies :run, "execute[restart Rails app #{application}]"
+        notifies :run, "execute[restart Rails app #{app_name}]"
 
         #restart node app
         notifies :restart, "service[monit]", :immediately
