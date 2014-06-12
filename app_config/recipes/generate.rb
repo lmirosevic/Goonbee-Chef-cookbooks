@@ -7,10 +7,10 @@ node[:deploy].each do |app_name, app_config|
       # determine path for settings file
       app_root = "#{app_config[:deploy_to]}/shared"
       filename = File.join(app_root, config_object[:path])
-      
-      #write config to file
+
+      # write config to file
       file filename do
-        mode "0660"
+        mode '0660'
         group app_config[:group]
         owner app_config[:user]
         action :create
@@ -24,11 +24,13 @@ node[:deploy].each do |app_name, app_config|
           raise 'Invalid config type used, currently supports "yaml" and "json"'
         end
 
-        #restart rails app
-        notifies :run, "execute[restart Rails app #{app_name}]"
-
-        #restart node app
-        notifies :restart, "service[monit]", :immediately
+        if app_config[:application_type] == 'rails'
+          # restart rails app
+          notifies :run, "execute[restart Rails app #{app_name}]"
+        elsif app_config[:application_type] == 'nodejs'
+          # restart node app
+          notifies :restart, 'service[monit]', :immediately
+        end
 
         only_if do
           File.exists?("#{deploy[:deploy_to]}") && File.exists?("#{deploy[:deploy_to]}/shared/config/")
