@@ -24,7 +24,11 @@ node[:deploy].each do |app_name, app_config|
           raise 'Invalid config type used, currently supports "yaml" and "json"'
         end
 
+        #restart rails app
         notifies :run, "execute[restart Rails app #{application}]"
+
+        #restart node app
+        notifies :restart, "service[monit]", :immediately
 
         only_if do
           File.exists?("#{deploy[:deploy_to]}") && File.exists?("#{deploy[:deploy_to]}/shared/config/")
