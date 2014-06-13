@@ -1,18 +1,18 @@
 require 'yaml'
 require 'json'
 
-node[:deploy].each do |app_name, app_config|
-  if app_config && app_config[:configs]
-    app_config[:configs].each do |config_name, config_object|
+node[:deploy].each do |application, deploy|
+  if deploy && deploy[:configs]
+    deploy[:configs].each do |config_name, config_object|
       # determine path for settings file
-      app_root = "#{app_config[:deploy_to]}/shared"
+      app_root = "#{deploy[:deploy_to]}/shared"
       filename = File.join(app_root, config_object[:path])
 
       # write config to file
       file filename do
         mode '0660'
-        group app_config[:group]
-        owner app_config[:user]
+        group deploy[:group]
+        owner deploy[:user]
         action :create
 
         case config_object[:type]
@@ -24,10 +24,10 @@ node[:deploy].each do |app_name, app_config|
           raise 'Invalid config type used, currently supports "yaml" and "json"'
         end
 
-        if app_config[:application_type] == 'rails'
+        if deploy[:application_type] == 'rails'
           # restart rails app
-          notifies :run, "execute[restart Rails app #{app_name}]"
-        elsif app_config[:application_type] == 'nodejs'
+          notifies :run, "execute[restart Rails app #{application}]"
+        elsif deploy[:application_type] == 'nodejs'
           # restart node app
           notifies :restart, 'service[monit]', :immediately
         end
