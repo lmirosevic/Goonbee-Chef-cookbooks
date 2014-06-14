@@ -24,22 +24,23 @@ node[:deploy].each do |application, deploy|
           raise 'Invalid config type used, currently supports "yaml" and "json"'
         end
 
-        if deploy[:application_type] == 'rails'
-          # restart rails app
-          notifies :run, "execute[restart Rails app #{application}]"
-        elsif deploy[:application_type] == 'nodejs'
-          # restart node app
-          ruby_block "restart node.js application #{application}" do
-            block do
-              Chef::Log.info("restart node.js via: #{node[:deploy][application][:nodejs][:restart_command]}")
-              Chef::Log.info(`#{node[:deploy][application][:nodejs][:restart_command]}`)
-              $? == 0
-            end
-          end
-        end
-
         only_if do
           File.exists?("#{deploy[:deploy_to]}") && File.exists?("#{deploy[:deploy_to]}/shared/config/")
+        end
+      end
+
+      # restart the app
+      if deploy[:application_type] == 'rails'
+        # restart rails app
+        notifies :run, "execute[restart Rails app #{application}]"
+      elsif deploy[:application_type] == 'nodejs'
+        # restart node app
+        ruby_block "restart node.js application #{application}" do
+          block do
+            Chef::Log.info("restart node.js via: #{node[:deploy][application][:nodejs][:restart_command]}")
+            Chef::Log.info(`#{node[:deploy][application][:nodejs][:restart_command]}`)
+            $? == 0
+          end
         end
       end
     end
