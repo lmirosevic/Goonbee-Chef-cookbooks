@@ -9,6 +9,7 @@ define :rake_task, :task => nil, :application => nil do
       command "if [ -f Gemfile ]; then echo 'OpsWorks: Gemfile found - running rake task with bundle exec' && #{bundler_commands.join(' && ')}; else echo 'OpsWorks: no Gemfile - running plain rake task' && #{commands.join(' && ')}; fi"
       cwd deploy[:current_path]
       environment (deploy[:environment] || {}).merge(deploy[:env_vars] || {})
+      timeout 86400
       action :run
     end
   end
